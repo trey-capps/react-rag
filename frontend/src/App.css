@@ -1,64 +1,37 @@
-.app-container {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
+/* App.css */
 
 .chat-box {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  overflow: hidden;
-}
-
-.message-list {
-  flex: 1;
-  padding: 10px;
-  overflow-y: auto;
-  background-color: #f5f5f5;
-}
-
-.message {
-  margin-bottom: 10px;
-}
-
-.message.user {
-  text-align: right;
-}
-
-.message.bot {
-  text-align: left;
-}
-
-.message-input {
-  display: flex;
-  border-top: 1px solid #ccc;
-  padding: 10px;
-}
-
-.message-input input {
-  flex: 1;
-  padding: 8px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-}
-
-.message-input button {
-  margin-left: 10px;
-  padding: 8px 16px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-.message-input button:hover {
-  background-color: #0056b3;
-}
+    max-width: 800px; /* Width remains the same */
+    margin: auto; /* Center the box */
+    padding: 1rem; /* Padding for inner spacing */
+    background-color: white; /* Background color */
+    border-radius: 0.5rem; /* Rounded corners */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+    height: 500px; /* Fixed height */
+    overflow-y: hidden; /* Hide overflow on the chat box */
+  }
+  
+  .message-list {
+    overflow-y: auto; /* Enable scrolling */
+    height: 80%; /* Fixed height for the message list */
+  }
+  
+  .intermediate-results {
+    background-color: white; /* Background color */
+    padding: 1rem; /* Padding for inner spacing */
+    border-radius: 0.5rem; /* Rounded corners */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+    min-width: 300px; /* Minimum width */
+    max-height: 500px; /* Fixed height */
+    overflow-y: auto; /* Enable scrolling for overflow */
+  }
+  
+  /* Optional: Custom scrollbar styling */
+  .intermediate-results::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  .intermediate-results::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+  }  

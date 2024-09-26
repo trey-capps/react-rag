@@ -1,85 +1,65 @@
 import React, { useState } from 'react';
-import ChatBox from './ChatBox';
-import MessageInput from './MessageInput';
-import MessageList from './MessageList';
-import ClearButton from './ClearButton';
-import IntermediateResults from './IntermediateResults';
-import './ChatApp.css';
+import { Box, Flex, Grid } from '@chakra-ui/react';
+import ChatBox from './components/ChatBox';
+import MessageList from './components/MessageList';
+import MessageInput from './components/MessageInput';
+import ClearButton from './components/ClearButton';
+import IntermediateResults from './components/IntermediateResults';
+import './styles.css';
 
 const App = () => {
   const [messages, setMessages] = useState([]);
-  const [intermediateResults, setIntermediateResults] = useState([]);
+  const [intermediateResults, setIntermediateResults] = useState({});
   const [loading, setLoading] = useState(false);
+  const [inputValue, setInputValue] = useState('');
 
   const handleSend = async (message) => {
-    setMessages((prev) => [...prev,{ user: 'User', text: message }]);
+    setMessages((prev) => [...prev, { user: 'User', text: message }]);
     setLoading(true);
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/answer', {
+      const response = await fetch('http://localhost:5000/api/answer', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({question: message}),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: message }),
       });
-      
+
       const data = await response.json();
-      const botMessage = data.answer;
-
-      setIntermediateResults(data.intermediate_results); 
-
-      // Append bot response
-      setMessages((prev) => [...prev, {user: 'Bot', text: botMessage}]);
+      setIntermediateResults(data.intermediate_steps); // Store intermediate results
+      setMessages((prev) => [...prev, { user: 'Bot', text: data.answer }]);
     } catch (error) {
-      console.log('Message', message)
-
-      console.error('Error fetching the answer:', error);
       setMessages((prev) => [...prev, { user: 'Bot', text: 'Error fetching the answer.' }]);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Function to clear the state
   const handleClear = () => {
     setMessages([]);
-    setIntermediateResults([]);
+    setIntermediateResults({});
+    setInputValue('');
   };
 
   return (
-    <div className="app-container">
-      <ChatBox>
-        <MessageList messages={messages} />
-        <MessageInput onSend={handleSend} />
-        <ClearButton clearFunc={handleClear}/>
-        {loading && (
-          <div className="loading-container">
-            
-          </div>
-        )
-        
-        }
-      </ChatBox>
-      <IntermediateResults results={intermediateResults} />
-    </div>
+    <Box p={4} bg="gray.100" minH="100vh">
+      <Grid templateColumns={{ base: '1fr', md: '2fr 1fr' }} gap={6} maxW="1200px" mx="auto">
+        <Box>
+          <ChatBox>
+            <Flex direction="column" height="80vh" position="relative">
+              <Box flex="1" overflowY="auto" paddingBottom="20px">
+                <MessageList messages={messages} />
+              </Box>
+              <Flex mt={2} alignItems="center" paddingBottom="20px">
+                <MessageInput onSend={handleSend} inputValue={inputValue} setInputValue={setInputValue} />
+                <ClearButton onClear={handleClear} />
+              </Flex>
+            </Flex>
+          </ChatBox>
+        </Box>
+        <IntermediateResults results={intermediateResults} />
+      </Grid>
+    </Box>
   );
 };
 
 export default App;
-
-// src/App.js
-// import React from 'react';
-// import AnimatedQABot from './components/AnimatedQABot'; // adjust the import path as needed
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <header>My React App</header>
-//       <main>
-//         <AnimatedQABot />
-//       </main>
-//       <footer>© 2024 My Company</footer>
-//     </div>
-//   );
-// }
-
-// export default App;
