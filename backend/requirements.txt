@@ -1,0 +1,15 @@
+flask
+flask-cors
+pydantic
+python-dotenv
+chromadb
+sentence_transformers
+
+langchain
+langchain-community 
+langchain-openai 
+langchain-experimental 
+
+llama-index 
+llama-index-embeddings-huggingface 
+llama-index-vector-stores-chroma
