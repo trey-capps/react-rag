@@ -1,0 +1,32 @@
+/* IntermediateResults.css */
+.intermediate-results-container {
+  position: absolute; /* Float to the right */
+  top: 50px; /* Adjust based on your layout */
+  right: 10px; /* Right side margin */
+  width: 400px; /* Increase width to 300px */
+  background-color: #f8f9fa; /* Light background color */
+  border: 1px solid #ced4da; /* Border for visibility */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px; /* Inner padding */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  z-index: 10; /* Ensure it appears above other content */
+  transition: max-height 0.3s ease; /* Smooth transition for height */
+  max-height: 500px; /* Increase maximum height to 500px */
+  overflow: auto; /* Allow scrolling if content exceeds height */
+}
+
+.intermediate-results-container h3 {
+  margin-top: 0;
+  margin-bottom: 10px; /* Space below the header */
+  text-align: center; /* Center the header text */
+  cursor: pointer; /* Indicate the header is clickable */
+}
+
+.intermediate-results-container ul {
+  padding-left: 0; /* Remove padding from list */
+  list-style-type: none; /* Remove bullet points */
+}
+
+.intermediate-results-container li {
+  margin-bottom: 5px; /* Add some space between list items */
+}

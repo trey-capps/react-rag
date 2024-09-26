@@ -1,0 +1,30 @@
+.container {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background-color: #fef3c7;
+    border-radius: 0.5rem;
+    border: 2px solid #fcd34d;
+    transition: all 0.5s;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+  }
+  
+  .container.show {
+    opacity: 1;
+    max-height: 24rem;
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: #92400e;
+    font-weight: 600;
+  }
+  
+  .container p {
+    font-size: 0.875rem;
+    color: #1f2937;
+  }

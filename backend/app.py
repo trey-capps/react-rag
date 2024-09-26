@@ -121,12 +121,14 @@ def get_answer():
     data = request.get_json()
     question = data.get('question')
     # Your logic for processing the question and getting an answer
-    inter_ans = classify_intent(question)
-    final_answer = f"Answer to the question: {question}"
-    return jsonify({
-        'intermediate_results': inter_ans,
-        'answer': final_answer
-    })
+
+    return jsonify({'response': f'Bot answer to {question}'})
+    # inter_ans = classify_intent(question)
+    # final_answer = f"Answer to the question: {question}"
+    # return jsonify({
+    #     'intermediate_results': inter_ans,
+    #     'answer': final_answer
+    # })
 
 if __name__ == '__main__':
     #res = classify_intent("What is the principal place for Silver Creset Vineyards")

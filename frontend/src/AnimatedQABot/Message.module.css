@@ -1,0 +1,42 @@
+.messageContainer {
+    display: flex;
+    margin-bottom: 1rem;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+  
+  .messageContainer.show {
+    opacity: 1;
+  }
+  
+  .messageContainer.user {
+    justify-content: flex-end;
+  }
+  
+  .messageContainer.bot {
+    justify-content: flex-start;
+  }
+  
+  .message {
+    max-width: 70%;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+  }
+  
+  .user .message {
+    background-color: #3b82f6;
+    color: white;
+  }
+  
+  .bot .message {
+    background-color: #e5e7eb;
+    color: #1f2937;
+  }
+  
+  .messageHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+  }
