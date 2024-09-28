@@ -5,7 +5,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:80"  # Map the container's port 80 to your host's port 3000
+      - "3000:80"  
 
   backend:
     build:
@@ -14,4 +14,4 @@ services:
     ports:
       - "5000:5000"  # Map the container's port 5000 to your host's port 5000
     environment:
-      FLASK_APP: app.py  # Change app.py to your main Flask file if different
+      FLASK_APP: app.py  
