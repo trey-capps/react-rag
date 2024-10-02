@@ -3,7 +3,7 @@ name: Deploy to AKS
 on:
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   build-and-deploy:
