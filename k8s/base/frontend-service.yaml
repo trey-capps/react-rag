@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  type: ClusterIP  # Service type is internal by default
+  selector:
+    app: frontend
+  ports:
+  - port: 80  # Port that will be used inside the cluster to access the frontend
+    targetPort: 80  # Port that the frontend container listens on
