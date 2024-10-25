@@ -1,0 +1,8 @@
+{
+    "name": "Flask + React Dev Container",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "frontend",
+    "workspaceFolder": "/app",
+    "forwardPorts": [3000, 5000]
+    //"postCreateCommand": "pip install --no-cache-dir -r /app/requirements.txt || true"
+}
