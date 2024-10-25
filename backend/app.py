@@ -119,21 +119,32 @@ def classify_intent(user_query: str):
 @app.route('/api/answer', methods=['POST'])
 def get_answer():
     data = request.get_json()
-    question = data.get('question')
+    question = data.get('query')
+    chat_history = data.get('chatHistory')
     # Your logic for processing the question and getting an answer
 
     #return jsonify({'answer': f'Bot answer to {question}', 'intermediate_results': ['Section 2. Place of Buisness']})
-    inter_ans = classify_intent(question)
-    final_answer = f"Answer to the question: {question}"
-    results = {
-        'intermediate_steps': {
-            'intent': [f"{intent['text']} {round(intent['score'], 2)}" for intent in inter_ans],
-            'context': ['doc1', 'doc2', 'doc3']
-        },
-        'answer': final_answer
+    #inter_ans = classify_intent(question)
+    # final_answer = f"Answer to the question: {question}"
+    # results = {
+    #     'intermediate_steps': {
+    #         'intent': [f"{intent['text']} {round(intent['score'], 2)}" for intent in inter_ans],
+    #         'context': ['doc1', 'doc2', 'doc3']
+    #     },
+    #     'answer': final_answer
+    # }
+    # print(results)
+
+    expected_results_format = {
+        'response': f'Response to question: {question}', 
+        'traces': [ # trace_name and content required
+            { 'trace_name': 'trace 1', 'content': {'random': 'random', 'context': ['doc1', 'doc2']} },
+            { 'trace_name': 'trace 2', 'content': {'titles': ['doc1', 'doc2'], 'other_titles': ['title', 'title']} },
+            { 'trace_name': 'Chat History', 'content': chat_history }
+        ]
     }
-    print(results)
-    return jsonify(results)
+    print("RESPONE:", expected_results_format)
+    return jsonify(expected_results_format)
 
 if __name__ == '__main__':
     #res = classify_intent("What is the principal place for Silver Creset Vineyards")
