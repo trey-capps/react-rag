@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
-import { Box, Flex, Grid } from '@chakra-ui/react';
+import { Box, Flex, Grid, Text } from '@chakra-ui/react';
 import ChatBox from './components/ChatBox';
 import MessageList from './components/MessageList';
 import MessageInput from './components/MessageInput';
 import ClearButton from './components/ClearButton';
-import IntermediateResults from './components/IntermediateResults';
 import './styles.css';
+
+import ResultsDisplayAccordion from './components/FullResultsDisplay';
+import ResultsHistoryAccordion from './components/ResultsHistoryAccordion';
+import SessionHistoryAccordion from './components/SessionHistoryAccordion';
 
 const App = () => {
   const [messages, setMessages] = useState([]);
-  const [intermediateResults, setIntermediateResults] = useState({});
+  const [traceResults, setTraceResults] = useState([]);
+  const [resultHistory, setResultHistory] = useState([]);
+  const [interactions, setInteractions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState('');
 
@@ -21,12 +26,13 @@ const App = () => {
       const response = await fetch('http://localhost:5000/api/answer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: message }),
+        body: JSON.stringify({ query: message, chatHistory: messages }),
       });
 
       const data = await response.json();
-      setIntermediateResults(data.intermediate_steps); // Store intermediate results
-      setMessages((prev) => [...prev, { user: 'Bot', text: data.answer }]);
+      setTraceResults(data.traces);
+      setResultHistory((prev) => [...prev, { question: message, traces: data.traces }]);
+      setMessages((prev) => [...prev, { user: 'Bot', text: data.response }]);
     } catch (error) {
       setMessages((prev) => [...prev, { user: 'Bot', text: 'Error fetching the answer.' }]);
     } finally {
@@ -35,9 +41,14 @@ const App = () => {
   };
 
   const handleClear = () => {
+    if (resultHistory.length > 0) {
+      setInteractions((prev) => [...prev, resultHistory]);
+    }
+
     setMessages([]);
-    setIntermediateResults({});
+    setTraceResults([]);
     setInputValue('');
+    setResultHistory([]);
   };
 
   return (
@@ -56,8 +67,20 @@ const App = () => {
             </Flex>
           </ChatBox>
         </Box>
-        <IntermediateResults results={intermediateResults} />
+        <Box overflowY="auto">
+          <ResultsDisplayAccordion traces={traceResults}/>
+        </Box>
       </Grid>
+      <Box>
+        <Text fontSize="xl" mb={4} fontWeight={'medium'}>
+          Current Interation
+        </Text>
+        <ResultsHistoryAccordion resultHistory={resultHistory} />
+        <Text fontSize="xl" mb={4} fontWeight={'medium'}>
+          Previous Interation
+        </Text>
+        <SessionHistoryAccordion interactions={interactions} />
+      </Box>
     </Box>
   );
 };
