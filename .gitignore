@@ -1,2 +1,4 @@
 /backend/secrets.env
 /backend/venv/
+/backend/.venv/
+__pycache__/
