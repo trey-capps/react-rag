@@ -13,3 +13,7 @@ langchain-experimental
 llama-index 
 llama-index-embeddings-huggingface 
 llama-index-vector-stores-chroma
+
+pymongo
+flask-bcrypt 
+flask-jwt-extended

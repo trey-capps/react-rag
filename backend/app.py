@@ -2,11 +2,6 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 
-app = Flask(__name__)
-CORS(app)
-
-load_dotenv('secrets.env')
-
 # Sample Corpus
 sample_document_json = [
     {
@@ -116,6 +111,129 @@ def classify_intent(user_query: str):
 
     return metadata_intent
 
+
+
+## User Authentication
+import os
+from flask import Flask, request, jsonify
+from pymongo.mongo_client import MongoClient
+from bson import ObjectId
+from flask_bcrypt import Bcrypt
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+
+load_dotenv('secrets.env')
+
+app = Flask(__name__)
+CORS(app)
+app.config['JWT_SECRET_KEY'] = 'your_secret_key'  # Replace with a secure key in production
+bcrypt = Bcrypt(app)
+jwt = JWTManager(app)
+
+uri = f"mongodb+srv://treycapps:{os.getenv('MONGO_CONN_PASS')}@cluster0.ca61l.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+client = MongoClient(uri)
+
+db = client['chatbot_db']
+users_collection = db['users']
+interactions_collection = db['interactions']
+
+### User-related Endpoints (For future login)
+
+@app.route('/api/register', methods=['POST'])
+def register_user():
+    data = request.json
+    email = data.get('email')
+    password = data.get('password')
+
+    if users_collection.find_one({'email': email}):
+        return jsonify({'error': 'User already exists'}), 400
+
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    users_collection.insert_one({'email': email, 'password': hashed_password})
+    return jsonify({'message': 'User registered successfully'}), 201
+
+@app.route('/api/login', methods=['POST'])
+def login_user():
+    data = request.json
+    email = data.get('email')
+    password = data.get('password')
+
+    user = users_collection.find_one({'email': email})
+    if user and bcrypt.check_password_hash(user['password'], password):
+        access_token = create_access_token(identity=str(user['_id']))
+        return jsonify({'access_token': access_token}), 200
+    return jsonify({'error': 'Invalid credentials'}), 401
+
+### Interaction-related Endpoints
+
+@app.route('/api/interactions/<interaction_id>', methods=['GET'])
+@jwt_required()
+def load_interaction(interaction_id):
+    interaction = interactions_collection.find_one({'_id': ObjectId(interaction_id)})
+
+    if not interaction:
+        return jsonify({'error': 'Interaction not found'}), 404
+
+    return jsonify({
+        'interactionId': str(interaction['_id']),
+        'interaction': interaction['interaction'],
+        'timestamp': interaction['timestamp']
+    }), 200
+
+@app.route('/api/interactions', methods=['POST'], endpoint='save_interaction')
+@jwt_required()
+def save_interaction():
+    user_id = get_jwt_identity()
+    data = request.json
+
+    interaction = {
+        'userId': user_id,
+        'interaction': data.get('interaction'),
+        'timestamp': data.get('timestamp')
+    }
+
+    # Insert the interaction into the MongoDB collection
+    result = interactions_collection.insert_one(interaction)
+    if result.inserted_id:
+        return jsonify({'success': True, 'interactionId': str(result.inserted_id)}), 201
+    else:
+        return jsonify({'error': 'Failed to save interaction'}), 500
+
+# Endpoint to retrieve all interactions for a user
+@app.route('/api/interactions', methods=['GET'], endpoint='get_user_interactions')
+@jwt_required()
+def get_user_interactions():
+    user_id = get_jwt_identity()
+
+    # Find interactions associated with the user
+    interactions = interactions_collection.find({'userId': user_id})
+
+    serialized_interactions = [
+        {
+            'interactionId': str(interaction['_id']),
+            'interaction': interaction['interaction'],
+            'timestamp': interaction['timestamp']
+        }
+        for interaction in interactions
+    ]
+    print(serialized_interactions)
+    return jsonify({'interactions': serialized_interactions}), 200
+
+@app.route('/api/interactions/<interaction_id>', methods=['DELETE'])
+@jwt_required()
+def delete_interaction(interaction_id):
+    user_id = get_jwt_identity()
+
+    # Only allow deletion if the user is the owner of the interaction
+    result = interactions_collection.delete_one({
+        '_id': ObjectId(interaction_id),
+        'userId': user_id
+    })
+
+    if result.deleted_count == 1:
+        return jsonify({'success': True}), 200
+    else:
+        return jsonify({'error': 'Interaction not found or unauthorized'}), 404
+
 @app.route('/api/answer', methods=['POST'])
 def get_answer():
     data = request.get_json()
@@ -147,6 +265,4 @@ def get_answer():
     return jsonify(expected_results_format)
 
 if __name__ == '__main__':
-    #res = classify_intent("What is the principal place for Silver Creset Vineyards")
-    #print(res)
-    app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5000)
