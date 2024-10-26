@@ -1,17 +1,11 @@
 import React from 'react';
 import { Button } from '@chakra-ui/react';
 
-const ClearButton = ({ onClear }) => {
-  return (
-    <Button
-      onClick={onClear}
-      colorScheme="red"
-      borderRadius="full" // Rounded button
-      variant="outline" // Outline variant for a subtle look
-    >
-      Clear Chat
-    </Button>
-  );
-};
+const ClearButton = ({ onClear }) => (
+  <Button variant="outline" colorScheme="red" ml={2} onClick={onClear}>
+    Clear
+  </Button>
+);
 
 export default ClearButton;
+

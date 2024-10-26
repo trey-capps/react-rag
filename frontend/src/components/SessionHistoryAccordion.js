@@ -4,43 +4,52 @@ import { Accordion, AccordionItem, AccordionButton, AccordionPanel, Box, Text } 
 const SessionHistoryAccordion = ({ interactions }) => {
   return (
     <Accordion allowMultiple>
-      {interactions.map((interaction, interactionIndex) => (
-        <AccordionItem key={interactionIndex}>
-          <AccordionButton>
-            <Box flex="1" textAlign="left" fontWeight="bold">
-              Interaction {interactionIndex + 1}
-            </Box>
-          </AccordionButton>
-          <AccordionPanel pb={4}>
-            {/* Nested accordion for questions within the interaction */}
-            <Accordion allowMultiple>
-              {interaction.map((entry, entryIndex) => (
-                <AccordionItem key={entryIndex}>
-                  <AccordionButton>
-                    <Box flex="1" textAlign="left">
-                      {entry.question}
-                    </Box>
-                  </AccordionButton>
-                  <AccordionPanel pb={4}>
-                    {entry.traces && entry.traces.map((trace, traceIndex) => (
-                      <Box key={traceIndex} mb={2} p={2} border="1px" borderColor="gray.200" borderRadius="md">
-                        {Object.entries(trace).map(([key, value]) => (
-                          <Box key={key} mb={1}>
-                            <Text fontWeight="bold" mb={1}>
-                              {key.charAt(0).toUpperCase() + key.slice(1)}:
+      {Array.isArray(interactions) && interactions.length > 0 ? (
+        interactions.map((interaction, interactionIndex) => {
+          const interactionData = interaction.interaction || {}; // Safely access interaction.interaction
+          const { question = 'No question available', traces = [] } = interactionData;
+
+          return (
+            <AccordionItem key={interactionIndex}>
+              <AccordionButton>
+                <Box flex="1" textAlign="left" fontWeight="bold">
+                  Interaction {interactionIndex + 1} - {question}
+                </Box>
+              </AccordionButton>
+              <AccordionPanel pb={4}>
+                <Text fontWeight="bold" mb={2}>
+                  Question: {question}
+                </Text>
+
+                {Array.isArray(traces) && traces.length > 0 ? (
+                  traces.map((trace, traceIndex) => (
+                    <Box key={traceIndex} mb={2} p={2} border="1px" borderColor="gray.200" borderRadius="md">
+                      <Text fontWeight="bold">Trace Name: {trace.trace_name}</Text>
+                      <Text fontWeight="bold" mt={2}>Content:</Text>
+                      {typeof trace.content === 'object' && Object.keys(trace.content).length > 0 ? (
+                        Object.entries(trace.content).map(([key, value], index) => (
+                          <Box key={index} ml={4} mt={1}>
+                            <Text fontWeight="bold">{key.charAt(0).toUpperCase() + key.slice(1)}:</Text>
+                            <Text>
+                              {Array.isArray(value) ? value.join(', ') : JSON.stringify(value, null, 2)}
                             </Text>
-                            <Text>{typeof value === 'object' ? JSON.stringify(value, null, 2) : value}</Text>
                           </Box>
-                        ))}
-                      </Box>
-                    ))}
-                  </AccordionPanel>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </AccordionPanel>
-        </AccordionItem>
-      ))}
+                        ))
+                      ) : (
+                        <Text>No content available</Text>
+                      )}
+                    </Box>
+                  ))
+                ) : (
+                  <Text>No traces available</Text>
+                )}
+              </AccordionPanel>
+            </AccordionItem>
+          );
+        })
+      ) : (
+        <Text>No interactions available.</Text>
+      )}
     </Accordion>
   );
 };

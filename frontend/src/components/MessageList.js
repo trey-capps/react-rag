@@ -1,25 +1,15 @@
 import React from 'react';
-import { Box, VStack } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 
 const MessageList = ({ messages }) => {
   return (
-    <VStack align="start" spacing={2} padding={2}>
+    <Box>
       {messages.map((msg, index) => (
-        <Box
-          key={index}
-          padding={3}
-          borderRadius="lg"
-          maxWidth="70%"
-          wordBreak="break-word"
-          backgroundColor={msg.user === 'User' ? 'blue.500' : 'gray.200'}
-          color={msg.user === 'User' ? 'white' : 'black'}
-          alignSelf={msg.user === 'User' ? 'flex-end' : 'flex-start'} // Align user messages to the right
-          boxShadow="md" // Optional shadow for a lifted effect
-        >
-          {msg.text}
+        <Box key={index} p={2} bg={msg.user === 'User' ? 'blue.200' : 'gray.200'} mb={2} borderRadius="md">
+          <Text><strong>{msg.user}:</strong> {msg.text}</Text>
         </Box>
       ))}
-    </VStack>
+    </Box>
   );
 };
 
