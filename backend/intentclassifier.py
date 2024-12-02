@@ -94,7 +94,7 @@ from pydantic import BaseModel, Field
 from langchain.output_parsers import PydanticOutputParser
 
 import os
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = ""
 
 """#### Defining Intent Output Structure"""
 

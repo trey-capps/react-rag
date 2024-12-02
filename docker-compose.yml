@@ -12,6 +12,6 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"  # Map the container's port 5000 to your host's port 5000
+      - "5000:5000"
     environment:
       FLASK_APP: app.py
